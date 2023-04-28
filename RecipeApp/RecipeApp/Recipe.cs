@@ -44,16 +44,24 @@ namespace RecipeApp
 
         public void DisplayRecipe()
         {
-            Console.WriteLine("Ingredients:");
-            foreach (string ingredient in ingredients)
+            if (ingredients == null)
             {
-                Console.WriteLine($"- {ingredient}");
+                Console.Write("No recipe found");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("\nSteps:");
-            for (int i = 0; i < steps.Length; i++)
+            else
             {
-                Console.WriteLine($"{i + 1}. {steps[i]}");
+                Console.WriteLine("Ingredients:");
+                foreach (string ingredient in ingredients)
+                {
+                    Console.WriteLine($"- {ingredient}");
+                }
+
+                Console.WriteLine("\nSteps:");
+                for (int i = 0; i < steps.Length; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {steps[i]}");
+                }
             }
         }
 
