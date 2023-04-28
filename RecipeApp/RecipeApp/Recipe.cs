@@ -47,7 +47,6 @@ namespace RecipeApp
             if (ingredients == null)
             {
                 Console.Write("No recipe found");
-                Environment.Exit(0);
             }
             else
             {
@@ -67,21 +66,35 @@ namespace RecipeApp
 
         public void ScaleRecipe(double factor)
         {
-            Console.WriteLine($"Scaling recipe by a factor of {factor}");
-            for (int i = 0; i < ingredients.Length; i++)
+            if (ingredients == null)
             {
-                string[] parts = ingredients[i].Split(' ');
-                double quantity = double.Parse(parts[0]) * factor;
-                string unit = parts[1];
-                string name = string.Join(" ", parts, 2, parts.Length - 2);
-                ingredients[i] = $"{quantity} {unit} of {name}";
+                Console.Write("No recipe found");
+            }
+            else
+            {
+                Console.WriteLine($"Scaling recipe by a factor of {factor}");
+                for (int i = 0; i < ingredients.Length; i++)
+                {
+                    string[] parts = ingredients[i].Split(' ');
+                    double quantity = double.Parse(parts[0]) * factor;
+                    string unit = parts[1];
+                    string name = string.Join(" ", parts, 2, parts.Length - 2);
+                    ingredients[i] = $"{quantity} {unit} of {name}";
+                }
             }
         }
 
         public void ResetRecipe()
         {
-            Console.WriteLine("Resetting recipe to original quantities");
-            EnterRecipe();
+            if (ingredients == null)
+            {
+                Console.Write("No recipe found");
+            }
+            else
+            {
+                Console.WriteLine("Resetting recipe to original quantities");
+                EnterRecipe();
+            }
         }
 
         public void ClearRecipe()
