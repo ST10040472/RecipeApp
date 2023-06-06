@@ -17,10 +17,12 @@ namespace RecipeApp
                 Console.WriteLine("\nMENU");
                 Console.WriteLine("1. Enter recipe");
                 Console.WriteLine("2. Display recipe");
-                Console.WriteLine("3. Scale recipe");
-                Console.WriteLine("4. Reset recipe");
-                Console.WriteLine("5. Clear recipe");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("3. Select recipe");
+                Console.WriteLine("4. Scale recipe");
+                Console.WriteLine("5. Reset recipe");
+                Console.WriteLine("6. Clear recipe");
+                Console.WriteLine("7. Display total calories of selected recipe");
+                Console.WriteLine("8. Exit");
 
                 Console.Write("Enter your choice: ");
                 int choice = int.Parse(Console.ReadLine());
@@ -36,20 +38,35 @@ namespace RecipeApp
                         break;
 
                     case 3:
+                        Console.Write("Enter the recipe number: ");
+                        int recipeNumber;
+                        if (!int.TryParse(Console.ReadLine(), out recipeNumber))
+                        {
+                            Console.WriteLine("Invalid recipe number! Please enter a valid recipe number.");
+                            continue;
+                        }
+                        recipe.SelectRecipe(recipeNumber);
+                        break;
+
+                    case 4:
                         Console.Write("Enter the scale factor: ");
                         double factor = double.Parse(Console.ReadLine());
                         recipe.ScaleRecipe(factor);
                         break;
 
-                    case 4:
+                    case 5:
                         recipe.ResetRecipe();
                         break;
 
-                    case 5:
+                    case 6:
                         recipe.ClearRecipe();
                         break;
 
-                    case 6:
+                    case 7:
+                        recipe.DisplayTotalCalories();
+                        break;
+
+                    case 8:
                         Environment.Exit(0);
                         break;
 
