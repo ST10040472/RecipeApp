@@ -8,8 +8,14 @@ namespace RecipeApp
 {
     internal class Recipe
     {
-        private string[] ingredients;
-        private string[] steps;
+        private List<Recipe> recipes;
+        private int selectedRecipeIndex;
+
+        public Recipe()
+        {
+            recipes = new List<Recipe>();
+            selectedRecipeIndex = -1;
+        }
 
         public void EnterRecipe()
         {
