@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RecipeApp
 {
-    internal class Recipe
+    public class Recipe
     {
         public string Name { get; set; }
         public List<Ingredients> Ingredients { get; set; }
@@ -44,6 +44,7 @@ namespace RecipeApp
             foreach (var ingredient in Ingredients)
             {
                 ingredient.Quantity *= factor;
+                ingredient.Calories *= factor;
             }
         }
 

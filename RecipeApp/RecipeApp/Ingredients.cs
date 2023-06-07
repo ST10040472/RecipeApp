@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RecipeApp
 {
-    internal class Ingredients
+    public class Ingredients
     {
         public string Name { get; set; }
         public double Quantity { get; set; }

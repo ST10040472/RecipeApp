@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RecipeApp
 {
-    internal class RecipeManager
+    public class RecipeManager
     {
         private List<Recipe> recipes;
         private int selectedRecipeIndex;
@@ -93,10 +93,11 @@ namespace RecipeApp
             }
             else
             {
+                List<Recipe> sortedRecipes = recipes.OrderBy(r => r.Name).ToList();
                 Console.WriteLine("Recipes:");
-                for (int i = 0; i < recipes.Count; i++)
+                for (int i = 0; i < sortedRecipes.Count; i++)
                 {
-                    Console.WriteLine($"{i + 1}. {recipes[i].Name}");
+                    Console.WriteLine($"{i + 1}. {sortedRecipes[i].Name}");
                 }
             }
         }
