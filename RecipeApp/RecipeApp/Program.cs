@@ -69,7 +69,7 @@ namespace RecipeApp
                         break;
 
                     case 6:
-                        recipeManager.ResetRecipe();
+                        //recipeManager.ResetRecipe();
                         break;
 
                     case 7:

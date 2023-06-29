@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 
 namespace RecipeApp
 {
@@ -48,20 +49,29 @@ namespace RecipeApp
             }
         }
 
-        public void ResetRecipe()
+       
+
+        public string GetRecipeDetails()
         {
-            // Re-enter the quantities for each ingredient
-            foreach (var ingredient in Ingredients)
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine($"Name: {Name}");
+
+            builder.AppendLine("Ingredients:");
+            foreach (Ingredients ingredient in Ingredients)
             {
-                Console.Write($"Enter the quantity of {ingredient.Name}: ");
-                double quantity;
-                if (!double.TryParse(Console.ReadLine(), out quantity) || quantity <= 0)
-                {
-                    Console.WriteLine("Invalid quantity! Please enter a valid number.");
-                    return;
-                }
-                ingredient.Quantity = quantity;
+                builder.AppendLine($"- {ingredient.Quantity} {ingredient.Unit} of {ingredient.Name}");
+                builder.AppendLine($"  Calories: {ingredient.Calories}");
+                builder.AppendLine($"  Food Group: {ingredient.FoodGroup}");
             }
+
+            builder.AppendLine("\nSteps:");
+            for (int i = 0; i < Steps.Count; i++)
+            {
+                builder.AppendLine($"{i + 1}. {Steps[i]}");
+            }
+
+            return builder.ToString();
         }
     }
 }

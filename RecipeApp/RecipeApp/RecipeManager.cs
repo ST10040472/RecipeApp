@@ -5,6 +5,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using Microsoft.VisualBasic;
+using LiveCharts;
+using LiveCharts.Wpf;
+
+
 
 namespace RecipeApp
 {
@@ -12,7 +18,7 @@ namespace RecipeApp
     {
         private List<Recipe> recipes;
         private int selectedRecipeIndex;
-
+        public SeriesCollection FoodGroupPercentages { get; set; }
         public RecipeManager()
         {
             recipes = new List<Recipe>();
@@ -23,63 +29,74 @@ namespace RecipeApp
         {
             Recipe recipe = new Recipe();
 
-            Console.Write("Enter the name of the recipe: ");
-            recipe.Name = Console.ReadLine();
+            recipe.Name = Interaction.InputBox("Enter the name of the recipe:");
 
-            Console.Write("Enter the number of ingredients in the recipe: ");
             int ingredientCount;
-            if (!int.TryParse(Console.ReadLine(), out ingredientCount) || ingredientCount <= 0)
+            while (!int.TryParse(Interaction.InputBox("Enter the number of ingredients in the recipe:"), out ingredientCount) || ingredientCount <= 0)
             {
-                Console.WriteLine("Invalid ingredient count! Please enter a valid number.");
-                return;
+                MessageBox.Show("Invalid ingredient count! Please enter a valid number.");
             }
 
             for (int i = 0; i < ingredientCount; i++)
             {
                 Ingredients ingredient = new Ingredients();
 
-                Console.Write($"Enter the name of ingredient {i + 1}: ");
-                ingredient.Name = Console.ReadLine();
+                ingredient.Name = Interaction.InputBox($"Enter the name of ingredient {i + 1}:");
 
-                Console.Write($"Enter the quantity of {ingredient.Name}: ");
                 double quantity;
-                if (!double.TryParse(Console.ReadLine(), out quantity) || quantity <= 0)
+                while (!double.TryParse(Interaction.InputBox($"Enter the quantity of {ingredient.Name}: "), out quantity) || quantity <= 0)
                 {
-                    Console.WriteLine("Invalid quantity! Please enter a valid number.");
-                    return;
+                    MessageBox.Show("Invalid quantity! Please enter a valid number.");
                 }
                 ingredient.Quantity = quantity;
 
-                Console.Write($"Enter the unit of measurement of {ingredient.Name}: ");
-                ingredient.Unit = Console.ReadLine();
+                ingredient.Unit = Interaction.InputBox($"Enter the unit of measurement of {ingredient.Name}:");
 
-                Console.Write($"Enter the number of calories for {ingredient.Name}: ");
                 double calories;
-                if (!double.TryParse(Console.ReadLine(), out calories) || calories <= 0)
+                while (!double.TryParse(Interaction.InputBox($"Enter the number of calories for {ingredient.Name}: "), out calories) || calories <= 0)
                 {
-                    Console.WriteLine("Invalid calories! Please enter a valid number.");
-                    return;
+                    MessageBox.Show("Invalid calories! Please enter a valid number.");
                 }
                 ingredient.Calories = calories;
 
-                Console.Write($"Enter the food group for {ingredient.Name}: ");
-                ingredient.FoodGroup = Console.ReadLine();
+                List<string> foodGroups = new List<string>
+                {
+                    "Grains",
+                    "Proteins",
+                    "Fruits",
+                    "Vegetables",
+                    "Dairy",
+                    "Fats and Oils",
+                    "Sweets and Snacks"
+                };
+
+                int selectedFoodGroupIndex = -1;
+                while (selectedFoodGroupIndex == -1)
+                {
+                    string foodGroupSelection = Interaction.InputBox($"Select the food group for {ingredient.Name}:\n" +
+                        $"{string.Join("\n", foodGroups.Select((group, index) => $"{index + 1}. {group}"))}");
+
+                    if (!int.TryParse(foodGroupSelection, out selectedFoodGroupIndex) || selectedFoodGroupIndex < 1 || selectedFoodGroupIndex > foodGroups.Count)
+                    {
+                        MessageBox.Show("Invalid food group selection! Please enter a valid number.");
+                        selectedFoodGroupIndex = -1;
+                    }
+                }
+
+                ingredient.FoodGroup = foodGroups[selectedFoodGroupIndex - 1];
 
                 recipe.Ingredients.Add(ingredient);
             }
 
-            Console.Write("Enter the number of steps: ");
             int stepCount;
-            if (!int.TryParse(Console.ReadLine(), out stepCount) || stepCount <= 0)
+            while (!int.TryParse(Interaction.InputBox("Enter the number of steps:"), out stepCount) || stepCount <= 0)
             {
-                Console.WriteLine("Invalid step count! Please enter a valid number.");
-                return;
+                MessageBox.Show("Invalid step count! Please enter a valid number.");
             }
 
             for (int i = 0; i < stepCount; i++)
             {
-                Console.Write($"Enter step {i + 1}: ");
-                recipe.Steps.Add(Console.ReadLine());
+                recipe.Steps.Add(Interaction.InputBox($"Enter step {i + 1}:"));
             }
 
             recipes.Add(recipe);
@@ -89,16 +106,19 @@ namespace RecipeApp
         {
             if (recipes.Count == 0)
             {
-                Console.WriteLine("No recipes found");
+                MessageBox.Show("No recipes found");
             }
             else
             {
                 List<Recipe> sortedRecipes = recipes.OrderBy(r => r.Name).ToList();
-                Console.WriteLine("Recipes:");
+
+                StringBuilder recipeList = new StringBuilder("Recipes:\n");
                 for (int i = 0; i < sortedRecipes.Count; i++)
                 {
-                    Console.WriteLine($"{i + 1}. {sortedRecipes[i].Name}");
+                    recipeList.AppendLine($"{i + 1}. {sortedRecipes[i].Name}");
                 }
+
+                MessageBox.Show(recipeList.ToString());
             }
         }
 
@@ -106,17 +126,21 @@ namespace RecipeApp
         {
             if (recipeNumber < 1 || recipeNumber > recipes.Count)
             {
-                Console.WriteLine("Invalid recipe number!");
+                MessageBox.Show("Invalid recipe number!");
             }
             else
             {
                 selectedRecipeIndex = recipeNumber - 1;
                 Recipe selectedRecipe = recipes[selectedRecipeIndex];
                 selectedRecipe.DisplayRecipe();
+
+                string recipeDetails = selectedRecipe.GetRecipeDetails();
+                MessageBox.Show($"Selected Recipe:\n\n{recipeDetails}");
+
                 double totalCalories = selectedRecipe.CalculateTotalCalories();
                 if (totalCalories > 300)
                 {
-                    Console.WriteLine("Warning: This recipe exceeds 300 calories!");
+                    MessageBox.Show("Warning: This recipe exceeds 300 calories!");
                 }
             }
         }
@@ -125,13 +149,13 @@ namespace RecipeApp
         {
             if (selectedRecipeIndex == -1)
             {
-                Console.WriteLine("No recipe selected!");
+                MessageBox.Show("No recipe selected!");
             }
             else
             {
                 Recipe selectedRecipe = recipes[selectedRecipeIndex];
                 double totalCalories = selectedRecipe.CalculateTotalCalories();
-                Console.WriteLine($"Total calories of {selectedRecipe.Name}: {totalCalories}");
+                MessageBox.Show($"Total calories of {selectedRecipe.Name}: {totalCalories}");
             }
         }
 
@@ -139,27 +163,45 @@ namespace RecipeApp
         {
             if (selectedRecipeIndex == -1)
             {
-                Console.WriteLine("No recipe selected!");
+                MessageBox.Show("No recipe selected!");
             }
             else
             {
                 Recipe selectedRecipe = recipes[selectedRecipeIndex];
                 selectedRecipe.ScaleRecipe(scale);
-                Console.WriteLine($"Recipe scaled by a factor of {scale}");
+                MessageBox.Show($"Recipe scaled by a factor of {scale}");
             }
         }
 
-        public void ResetRecipe()
+        public void ResetRecipe(Action<string> showMessage, Func<string, string> getInput)
         {
             if (selectedRecipeIndex == -1)
             {
-                Console.WriteLine("No recipe selected!");
+                showMessage("No recipe selected!");
+                return;
             }
-            else
+
+            Recipe selectedRecipe = recipes[selectedRecipeIndex];
+
+            foreach (var ingredient in selectedRecipe.Ingredients)
             {
-                Recipe selectedRecipe = recipes[selectedRecipeIndex];
-                selectedRecipe.ResetRecipe();
-                Console.WriteLine("Recipe reset to original quantities");
+                string quantityInput = getInput($"Enter the quantity of {ingredient.Name}: ");
+                double quantity;
+                if (!double.TryParse(quantityInput, out quantity) || quantity <= 0)
+                {
+                    showMessage("Invalid quantity! Please enter a valid number.");
+                    return;
+                }
+                ingredient.Quantity = quantity;
+
+                string caloriesInput = getInput($"Enter the calories for {ingredient.Name}: ");
+                double calories;
+                if (!double.TryParse(caloriesInput, out calories) || calories <= 0)
+                {
+                    showMessage("Invalid calories! Please enter a valid number.");
+                    return;
+                }
+                ingredient.Calories = calories;
             }
         }
 
@@ -167,14 +209,19 @@ namespace RecipeApp
         {
             if (selectedRecipeIndex == -1)
             {
-                Console.WriteLine("No recipe selected!");
+                MessageBox.Show("No recipe selected!");
             }
             else
             {
                 recipes.RemoveAt(selectedRecipeIndex);
                 selectedRecipeIndex = -1;
-                Console.WriteLine("Recipe cleared");
+                MessageBox.Show("Recipe cleared");
             }
         }
+
+
+
+
+
     }
 }
